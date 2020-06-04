@@ -12,8 +12,8 @@ Compilei o binário da versão 4.2.0 do site oficial do qemu.
 
 
 
-# Instruções para emular
-## create img:
+## Instruções para emular
+### create img:
 ```
 qemu-img create -f qcow2 hda.qcow2 5G
 ```
@@ -30,7 +30,7 @@ qemu-img create -f qcow2 hda.qcow2 5G
   -nographic -no-reboot
   ```
 
-## Extracting kernel: 
+### Extracting kernel: 
 para ver o conteudo do /boot/ no ubuntu:
 
 
