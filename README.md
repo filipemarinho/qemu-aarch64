@@ -2,6 +2,7 @@
 Emulação com o QEMU 4.2.0 para ARM 64 bits e alguns programas em assembly. 
 
 Host: Linux Ubuntu 5.4.0-33-generic #37-Ubuntu SMP x86_64 GNU/Linux
+
 Guest: Linux debian 4.9.0-12-arm64 #1 SMP Debian 4.9.210-1  aarch64 GNU/Linux
 
 
