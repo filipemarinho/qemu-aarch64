@@ -1,8 +1,12 @@
+//Filipe Marinho - basic prompt, respond yes or no
+//made for: Linux debian 4.9.0-12-arm64  SMP Debian 4.9.210-1 (2020-01-20) aarch64 GNU/Linux
+//run with as io.s -o io.o && ld io.o -o io &&./io
+
 .bss
 	buffer:         .zero 4                 // fill n bytes w/ zeros
 	.align
 .data
-	prompt:         .asciz  "Tu eh neh? (S or N): \n"
+	prompt:         .asciz  "Sim ou não? (Enter S/s or N): \n"
 	.equ            len.prompt,.-prompt
 
         yes: .asciz  " Sim!\n"
@@ -31,12 +35,10 @@
 _start:
         nop
         bl write_prompt
-        .read_buffer:                   // label for looping when input values are not between ASCII 0 and 9
+        .read_buffer:                   // label 
         bl read_buffer
         ldr x9,=buffer			//x9 recebe a leitura
-        //mov x10, xzr                    // counter
-        //1:
-        ldrb w11, [x9,x10]      // load one byte from buffer array at element n
+        ldrb w11, [x9,x10]  // load one byte from buffer array at element n
         cmp w11, #0x53
         beq yes_exit        // if is equal to ASCII value for s, print yes and leave
 
@@ -92,23 +94,6 @@ print_no:
         pop2 x29, x30
         ret
 
-write_result:
-        push2 x29, x30
-        mov x8, #64              // syscall write
-        mov x0, #1              // fd stdout
-        ldr x1,=yes
-        mov x2, #len.yes
-        svc #0
-        pop2 x29, x30
-        ret
 
 
-flush:
-        push2 x29, x30
-        mov x8, #63              // syscall read
-        mov x0, #2              // fd stderr
-        ldr x1,=buffer
-        mov x2, #(1 << 30)      // experiment with this
-        svc #0
-        pop2 x29, x30
-        ret
+
