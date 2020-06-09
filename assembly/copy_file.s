@@ -62,7 +62,7 @@ _start:                            // entry of program
     ldr x1,qAdrszNameFileOutput  // file name
     mov x2,O_CREAT|O_RDWR        //  flags   
     ldr x3,qFicMask1             // Mode
-    mov x8,56                  // call system #56 file
+    mov x8,56                  // call system open file
     svc 0 
     cmp x0,#0                    // create error ?
     ble erreur4
