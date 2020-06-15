@@ -2,10 +2,8 @@
 //made for: Linux debian 4.9.0-12-arm64  SMP Debian 4.9.210-1 (2020-01-20) aarch64 GNU/Linux
 //run with as io.s -o io.o && ld io.o -o io &&./io
 
-.bss
-	buffer:         .zero 4                 // fill n bytes w/ zeros
-	.align
 .data
+	buffer:		.zero 4			// fills n (4) bytes w/ zeros 
 	prompt:         .asciz  "Sim ou não? (Enter S/s or N): \n"
 	.equ            len.prompt,.-prompt
 
