@@ -77,7 +77,7 @@ _start:
     mov x0,AT_FDCWD	        	// flag to file
     ldr x1,qAdrsBuffer  	    // load file name
     mov x2,O_CREAT|O_RDWR       // flag
-    ldr x3,0644                 // Mode
+    ldr x3,qFicMask1            // Mode
     mov x8,56                   // request open file, sys_open = 56 
     svc 0			            // call system
     mov x19,x0                  // save file descriptor
@@ -126,3 +126,4 @@ qAdrszText:        .quad  szText
 qAdrsBuffer:          .quad  sBuffer
 qAdrsBuffer1:          .quad  sBuffer1
 qAdrszCarriageReturn: .quad  szCarriageReturn
+qFicMask1:              .quad 0644
