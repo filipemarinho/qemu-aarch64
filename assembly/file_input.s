@@ -12,8 +12,8 @@
 
 /* Initialized data                        */
 .data
-szMessDeb: .asciz "Enter file name : "
-szMessNum: .asciz "Enter the file text: "
+szName: .asciz "Enter file name : "
+szText: .asciz "Enter the file text: "
 szCarriageReturn:  .asciz "\n"
 
 /* UnInitialized data                      */
@@ -29,8 +29,8 @@ sBuffer1:    .skip    BUFFERSIZE
 _start:
 
     //initial message
-    ldr x0,qAdrszMessDeb
-    bl affichageMess		//format and print, x0 contains the address
+    ldr x0,qAdrszName
+    bl formatWrite		//format and print, x0 contains the address
     mov x0,0			// Linux input console stdin = 0
     ldr x1,qAdrsBuffer     	// buffer address 
     mov x2,BUFFERSIZE      	// buffer size 
@@ -43,14 +43,14 @@ _start:
     strb w2,[x1,x0]        	// store byte at the last digit input string (x0 = len-1)
  
     ldr x0,qAdrsBuffer     	// buffer address 
-    bl affichageMess		//format and print, x0 contains the address
+    bl formatWrite		//format and print, x0 contains the address
     ldr x0,qAdrszCarriageReturn //print \n   
-    bl affichageMess		//format and print, x0 contains the address
+    bl formatWrite		//format and print, x0 contains the address
     
     
     //second message 
-    ldr x0,qAdrszMessNum	// load message address
-    bl affichageMess		// format and print, x0 contains the address
+    ldr x0,qAdrszText	// load message address
+    bl formatWrite		// format and print, x0 contains the address
     mov x0,0           		// Linux input console stdin = 0
     ldr x1,qAdrsBuffer1     	// buffer address 
     mov x2,BUFFERSIZE      	// buffer size 
@@ -63,9 +63,9 @@ _start:
     mov x20,x0			// save len to write
     
     ldr x0,qAdrsBuffer1     	// buffer address 
-    bl affichageMess		// format and print, x0 contains the address
+    bl formatWrite		// format and print, x0 contains the address
     ldr x0,qAdrszCarriageReturn //print \n 
-    bl affichageMess		// format and print, x0 contains the address
+    bl formatWrite		// format and print, x0 contains the address
 
 
 
@@ -74,12 +74,12 @@ _start:
 
 
     //create file and open
-    mov x0,AT_FDCWD		// flag to file
-    ldr x1,qAdrsBuffer  	// load file name
+    mov x0,AT_FDCWD	        	// flag to file
+    ldr x1,qAdrsBuffer  	    // load file name
     mov x2,O_CREAT|O_RDWR       // flag
-    ldr x3,qFicMask1            // Mode
+    ldr x3,0644                 // Mode
     mov x8,56                   // request open file, sys_open = 56 
-    svc 0			// call system
+    svc 0			            // call system
     mov x19,x0                  // save file descriptor
 
     //write to file
@@ -99,7 +99,7 @@ _start:
     svc 0                  	// perform the system call
 
     //format and print, x0 contains the address
-affichageMess:
+formatWrite:
     stp x0,x1,[sp,-16]!        // save  registers
     stp x2,x8,[sp,-16]!        // save  registers
     mov x2,0                   // size counter 
@@ -121,9 +121,8 @@ affichageMess:
 
 
 .align 4                   // instruction to realign the following routines
-qAdrszMessDeb:        .quad szMessDeb
-qAdrszMessNum:        .quad  szMessNum
+qAdrszName:        .quad szName
+qAdrszText:        .quad  szText
 qAdrsBuffer:          .quad  sBuffer
 qAdrsBuffer1:          .quad  sBuffer1
 qAdrszCarriageReturn: .quad  szCarriageReturn
-qFicMask1:              .quad 0644
