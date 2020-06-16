@@ -94,7 +94,7 @@ _start:
     svc #0			// perform the system call
  
 100:   /* END */
-    mov x0, #0             	// return code
+        mov x0, #0             	// return code
     mov x8, #93          	// request to exit program
     svc 0                  	// perform the system call
 
