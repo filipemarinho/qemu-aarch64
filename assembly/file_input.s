@@ -13,10 +13,6 @@
 szName: .asciz "Enter file name : "         // message to request the file name 
 szText: .asciz "Enter the file text: "      // message to request the file content
 szCarriageReturn:  .asciz "\n"              // auxiliar to print carriage returns
-
-/* UnInitialized data                      */
-
-.bss
 sBuffer:    .skip    BUFFERSIZE             // buffer for file name
 sBuffer1:    .skip    BUFFERSIZE            // buffer for file content
 
