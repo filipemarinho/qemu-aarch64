@@ -17,12 +17,12 @@
 .text
         .global _start
 
-        .macro push2, xreg1, xreg2
+        .macro push2, xreg1, xreg2		// macro to save registers
         .push2\@:
          stp     \xreg1, \xreg2, [sp, #-16]!
         .endm
 
-        .macro  pop2, xreg1, xreg2
+        .macro  pop2, xreg1, xreg2		//macro to restaur registers
         .pop2\@:
         ldp     \xreg1, \xreg2, [sp], #16
         .endm
@@ -31,7 +31,6 @@
 
 
 _start:
-        nop
         bl write_prompt
         .read_buffer:                   // label 
         bl read_buffer
@@ -47,50 +46,50 @@ _start:
 	bl exit
 
 exit:
-        mov x8, #93
-        mov x0, xzr
-        svc 0
+        mov x8, #93		// request to exit program
+        mov x0, xzr		// return code	
+        svc 0			// perform the system call
 
 write_prompt:
-        push2 x29, x30
-        mov x8, #64              // syscall write
-        mov x0, #1              // fd dtdout
-        ldr x1,=prompt
-        mov x2, #len.prompt
-        svc #0
-        pop2 x29, x30
-        ret
+        push2 x29, x30		// macro to save registers
+        mov x8, #64              // request system write to file, sys_write = 64
+        mov x0, #1              // output Linux standard STDOUT=1
+        ldr x1,=prompt		// load message to write
+        mov x2, #len.prompt	// length to write
+        svc #0			// perform the system call
+        pop2 x29, x30		//macro to restaur registers
+        ret			// return
 
 
 read_buffer:
-        push2 x29, x30
-        mov x8, #63              // syscall read
-        mov x0, #0              // fd stdin
-        ldr x1,=buffer
+        push2 x29, x30		// macro to save registers
+        mov x8, #63             // request to read datas sys_read = 63
+        mov x0, #0              // input Linux standard STDIN=0
+        ldr x1,=buffer		// load message to write
         mov x2, #1              // arbitrary length
-        svc #0
-        pop2 x29, x30
-        ret
+        svc #0			// perform the system call
+        pop2 x29, x30		//macro to restaur registers
+        ret			// return
 
 yes_exit:
-        push2 x29, x30
-        mov x8, #64              // syscall write
-        mov x0, #1              // fd stdout
-        ldr x1,=yes
-        mov x2, #len.yes
-        svc #0
-        pop2 x29, x30
-	bl exit
-	ret
+        push2 x29, x30		// macro to save registers
+        mov x8, #64             // request system write to file, sys_write = 64
+        mov x0, #1              // output Linux standard STDOUT=1
+        ldr x1,=yes		// load message to write
+        mov x2, #len.yes	// length to write
+        svc #0			// perform the system call
+        pop2 x29, x30		//macro to restaur registers
+	bl exit			//exit routine
+	ret			// return
 print_no:
-        push2 x29, x30
-        mov x8, #64              // syscall write
-        mov x0, #1              // fd stdout
-        ldr x1,=no
-        mov x2, #len.no
-        svc #0
-        pop2 x29, x30
-        ret
+        push2 x29, x30		//save registers
+        mov x8, #64             // request system write to file, sys_write = 64
+        mov x0, #1              // output Linux standard STDOUT=1
+        ldr x1,=no		// load message to write
+        mov x2, #len.no		// length to write
+        svc #0			// perform the system call
+        pop2 x29, x30		//macro to restaur registers
+        ret			// return
 
 
 
