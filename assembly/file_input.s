@@ -2,25 +2,23 @@
 //made for: Linux debian 4.9.0-12-arm64  SMP Debian 4.9.210-1 (2020-01-20) aarch64 GNU/Linux
 //run with as file_input.s -o file.o && ld file.o -o file &&./file
 
-.equ BUFFERSIZE,   80
-.equ TAILLEBUF,  1000
-.equ AT_FDCWD,    -100
-.equ O_RDWR,   0x0002
-.equ O_CREAT,  0x040
-.equ O_RDWR,   0x0002
+.equ BUFFERSIZE,   80           //buffer size for input 
+.equ AT_FDCWD,    -100          // Flags for file manipulation 
+.equ O_CREAT,  0x040            // flag to create file
+.equ O_RDWR,   0x0002           // flag to read and write mode
 
 
 /* Initialized data                        */
 .data
-szName: .asciz "Enter file name : "
-szText: .asciz "Enter the file text: "
-szCarriageReturn:  .asciz "\n"
+szName: .asciz "Enter file name : "         // message to request the file name 
+szText: .asciz "Enter the file text: "      // message to request the file content
+szCarriageReturn:  .asciz "\n"              // auxiliar to print carriage returns
 
 /* UnInitialized data                      */
 
 .bss
-sBuffer:    .skip    BUFFERSIZE
-sBuffer1:    .skip    BUFFERSIZE
+sBuffer:    .skip    BUFFERSIZE             // buffer for file name
+sBuffer1:    .skip    BUFFERSIZE            // buffer for file content
 
 /*  code section                           */
 
@@ -29,28 +27,28 @@ sBuffer1:    .skip    BUFFERSIZE
 _start:
 
     //initial message
-    ldr x0,qAdrszName
-    bl formatWrite		//format and print, x0 contains the address
-    mov x0,0			// Linux input console stdin = 0
-    ldr x1,qAdrsBuffer     	// buffer address 
+    ldr x0,qAdrszName       // load the address of the name message to x0 
+    bl formatWrite          // format and print, x0 contains the address
+    mov x0,0                // Linux input console stdin = 0
+    ldr x1,qAdrsBuffer     	// load buffer address 
     mov x2,BUFFERSIZE      	// buffer size 
     mov x8,63            	// request to read datas sys_read = 63
     svc 0                  	// call system
     
     ldr x1,qAdrsBuffer     	// buffer address 
     mov x2,#0              	// end of string
-    sub x0,x0,#1 	  	// x0 contains the len, x0-1 will insert the byte at the last digit
+    sub x0,x0,#1 	  	    // x0 contains the len, x0-1 will insert the byte at the last digit
     strb w2,[x1,x0]        	// store byte at the last digit input string (x0 = len-1)
  
     ldr x0,qAdrsBuffer     	// buffer address 
-    bl formatWrite		//format and print, x0 contains the address
+    bl formatWrite		    //format and print, x0 contains the address
     ldr x0,qAdrszCarriageReturn //print \n   
-    bl formatWrite		//format and print, x0 contains the address
+    bl formatWrite		    //format and print, x0 contains the address
     
     
     //second message 
-    ldr x0,qAdrszText	// load message address
-    bl formatWrite		// format and print, x0 contains the address
+    ldr x0,qAdrszText	    // load message address
+    bl formatWrite		    // format and print, x0 contains the address
     mov x0,0           		// Linux input console stdin = 0
     ldr x1,qAdrsBuffer1     	// buffer address 
     mov x2,BUFFERSIZE      	// buffer size 
@@ -60,21 +58,16 @@ _start:
     mov x2,#0              	// end of string
     strb w2,[x1,x0]        	// store byte at the end of input string
     
-    mov x20,x0			// save len to write
+    mov x20,x0			    // save len to write
     
     ldr x0,qAdrsBuffer1     	// buffer address 
-    bl formatWrite		// format and print, x0 contains the address
+    bl formatWrite		        // format and print, x0 contains the address
     ldr x0,qAdrszCarriageReturn //print \n 
-    bl formatWrite		// format and print, x0 contains the address
-
-
-
-
-
+    bl formatWrite              // format and print, x0 contains the address
 
 
     //create file and open
-    mov x0,AT_FDCWD	        	// flag to file
+    mov x0,AT_FDCWD	        	// flag create file
     ldr x1,qAdrsBuffer  	    // load file name
     mov x2,O_CREAT|O_RDWR       // flag
     ldr x3,qFicMask1            // Mode
@@ -83,7 +76,7 @@ _start:
     mov x19,x0                  // save file descriptor
 
     //write to file
-    ldr x1,qAdrsBuffer1		// load message to write
+    ldr x1,qAdrsBuffer1		    // load message to write
     mov x2,x20                  // length to write 
     mov x8, #64               	// request system write to file, sys_write = 64
     svc #0                      // perform the system call
@@ -91,10 +84,10 @@ _start:
     //Close file
     mov x0,x19                  // Fd   
     mov x8, #57               	// request system to close file,  sys_close = 57
-    svc #0			// perform the system call
+    svc #0			            // perform the system call
  
 100:   /* END */
-        mov x0, #0             	// return code
+    mov x0, #0             	// return code
     mov x8, #93          	// request to exit program
     svc 0                  	// perform the system call
 
@@ -121,7 +114,7 @@ formatWrite:
 
 
 .align 4                   // instruction to realign the following routines
-qAdrszName:        .quad szName
+qAdrszName:        .quad szName     
 qAdrszText:        .quad  szText
 qAdrsBuffer:          .quad  sBuffer
 qAdrsBuffer1:          .quad  sBuffer1
